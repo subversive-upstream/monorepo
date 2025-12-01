@@ -1,0 +1,38 @@
+name: Extract Commonware Folders to Repositories
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  workflow_call:
+    secrets:
+      SUBVERT_TOKEN:
+        required: true
+
+# ls -d */ | sed 's#/##'|tr '\n' ','
+jobs:
+  commonware-subrepos:
+    strategy:
+      matrix:
+        subrepo:
+          [
+            broadcast,
+            coding,
+          ]
+    name: Publish to subversive-upstream/commonware-${{ matrix.subrepo }} repository
+    runs-on: ubuntu-latest
+    environment: Release
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@3df4ab11eba7bda6032a0b82a6bb43b11571feac # v4
+        with:
+          fetch-depth: "0"
+      - uses: cucumber/action-publish-subrepo@main
+        id: commonware-subrepo
+        continue-on-error: true
+        with:
+          working-directory: ${{ matrix.subrepo }}
+          github-token: ${{ secrets.SUBVERT_TOKEN }}
+          create-subrepo-if-missing: true
