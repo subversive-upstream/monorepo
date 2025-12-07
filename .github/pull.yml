@@ -1,6 +1,6 @@
 version: "1"
 rules:
-  - base: master
+  - base: main
     upstream: commonwarexyz:main
     mergeMethod: merge
     mergeUnstable: true
